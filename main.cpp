@@ -1,4 +1,5 @@
 #include "iostream"
+#include "cell.h"
 using namespace std;
 
 int grille[9][9];
