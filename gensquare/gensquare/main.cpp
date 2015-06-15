@@ -19,6 +19,10 @@ int main(int argc, char *argv[])
     hauteur = atoi(argv[2]);
     nbtrous = atoi(argv[3]);
 
+    if(largeur>DIMMAX || hauteur>DIMMAX) {
+        return 1;
+    }
+
     for (int i = 0; i < hauteur; i++)
     {
         for (int j = 0; j < largeur; j++)
@@ -28,6 +32,24 @@ int main(int argc, char *argv[])
     }
 
     srand((int)time(0));
+
+    for(int k = 0; k < nbtrous; k++)
+    {
+        int i = rand() % hauteur;
+        int j = rand() % largeur;
+        puzzle[i][j] = 1;
+    }
+
+    cout << largeur << endl;
+    cout << hauteur << endl;
+
+    for (int i = 0; i < hauteur; i++)
+    {
+        for (int j = 0; j < largeur; j++)
+        {
+            cout << (int)puzzle[i][j];
+        }
+    }
 
     return 1;
 }
