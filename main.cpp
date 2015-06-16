@@ -43,7 +43,7 @@ Square* getPlusGrandCarre(int i, int j, Cell** currentGrille)
             {
                 for(int jj = j; jj<= j+size; jj++)
                 {
-                    if(!currentGrille[ii][jj].isAvailable())
+                    if(!currentGrille[ii][jj].getIsAvailable())
                     {
                         isOk = false;
                         break;
