@@ -3,6 +3,7 @@
 #include "cell.h"
 #include <QFile>
 #include <QTextStream>
+#include <square.h>
 
 using namespace std;
 int ligne, colonne;
@@ -12,6 +13,9 @@ void afficherGrilleIsAvailable(Cell **grille);
 void afficherGrilleValue(Cell **grille);
 void lireFichier(char* path);
 void exploerCelluleSuivante(int positionI, int positionJ);
+Square* getPlusGrandCarre(int i, int j, Cell** currentGrille);
+
+
 int main(int argc, char *argv[])
 {
     lireFichier("../build/sample/s9.txt");
@@ -19,6 +23,28 @@ int main(int argc, char *argv[])
     afficherGrilleValue(grille);
     exploerCelluleSuivante(0,0);
     return 1;
+}
+
+Square* getPlusGrandCarre(int i, int j, Cell** currentGrille)
+{
+    int size = 1;
+    bool canContinu = true;
+
+    if(!currentGrille[i][j].getIsAvailable()) {
+        return NULL;
+    }
+
+    while(canContinu)
+    {
+
+    }
+
+    Square *square = new Square();
+    square->setLargeur(size);
+    square->setPositionI(i);
+    square->setPositionJ(j);
+
+    return square;
 }
 
 void lireFichier(char* path)
@@ -53,7 +79,6 @@ void lireFichier(char* path)
 
     }
 }
-
 void afficherGrilleIsAvailable(Cell **grille)
 {
     cout << "Affichage matrice " << endl;
