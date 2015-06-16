@@ -140,6 +140,21 @@ void remplirGrilleAvecNouveauCarre(Square *carre, Cell** grid)
         }
     }
 }
+void supprimerGrilleAvecCarre(Square *carre, Cell** grid)
+{
+    squareId --;
+    if(squareId == 1) {
+        squareId = 9;
+    }
+
+    for(int i=carre->getPositionI();i<carre->getLargeur() + carre->getPositionI();i++)
+    {
+        for(int j=carre->getPositionJ();j<carre->getLargeur() +carre->getPositionJ() ;j++)
+        {
+            grid[i][j].setValue(0);
+        }
+    }
+}
 Square* getPlusGrandCarre(int i, int j, Cell** currentGrille)
 {
     int size = 1;
@@ -186,6 +201,12 @@ Square* getPlusGrandCarre(int i, int j, Cell** currentGrille)
 }
 void rechercherSolutionOptimale(int i, int j, int squareMaxSize, Cell** currentGrid, int nbSquares)
 {
+    //Couper la branche
+    if(nbSquares >= nbSquareProvisoire)
+    {
+        return;
+    }
+
     Square *square = getPlusGrandCarre(i,j,currentGrid);
     afficherGrilleValue(currentGrid);
     int coord[2] = {-1,-1};
@@ -195,6 +216,9 @@ void rechercherSolutionOptimale(int i, int j, int squareMaxSize, Cell** currentG
     {
         rechercherSolutionOptimale(coord[0], coord[1], squareMaxSize, currentGrid, ++nbSquares);
     }
+
+    supprimerGrilleAvecCarre(square,currentGrid);
+    afficherGrilleValue(currentGrid);
 }
 void getPositionOfNextCase(Cell** grid, int result[2])
 {
