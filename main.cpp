@@ -10,13 +10,23 @@ int ligne, colonne;
 Cell** grille;
 void afficherGrilleIsAvailable(Cell **grille);
 void afficherGrilleValue(Cell **grille);
+void lireFichier(char* path);
+
 int main(int argc, char *argv[])
-{ 
-    QFile inputSudoku("../build/sample/s9.txt");
+{
+    lireFichier("../build/sample/s9.txt");
+    afficherGrilleIsAvailable(grille);
+    afficherGrilleValue(grille);
+    return 1;
+}
+
+void lireFichier(char* path)
+{
+    QFile inputSudoku(path);
     if(!inputSudoku.open(QIODevice::ReadOnly))
     {
             cout << "Error while openning input file" << endl;
-            return -1;
+            return;
     }
 
     QTextStream stream(&inputSudoku);
@@ -41,10 +51,8 @@ int main(int argc, char *argv[])
         }
 
     }
-    afficherGrilleIsAvailable(grille);
-    afficherGrilleValue(grille);
-    return 1;
 }
+
 void afficherGrilleIsAvailable(Cell **grille)
 {
     cout << "Affichage matrice " << endl;
