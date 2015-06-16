@@ -12,13 +12,16 @@ Cell** grille;
 void afficherGrilleIsAvailable(Cell **grille);
 void afficherGrilleValue(Cell **grille);
 void lireFichier(char* path);
+void exploerCelluleSuivante(int positionI, int positionJ);
 Square* getPlusGrandCarre(int i, int j, Cell** currentGrille);
+
 
 int main(int argc, char *argv[])
 {
     lireFichier("../build/sample/s9.txt");
     afficherGrilleIsAvailable(grille);
     afficherGrilleValue(grille);
+    exploerCelluleSuivante(0,0);
     return 1;
 }
 
@@ -129,3 +132,21 @@ void afficherGrilleValue(Cell **grille)
         cout << endl;
     }
 }
+void exploerCelluleSuivante(int positionI, int positionJ)
+{
+    if(positionI < ligne)
+    {
+        if(positionJ < colonne)
+        {
+            if(grille[positionI][positionJ].getIsAvailable())
+            {
+                cout << "Explore" << endl;
+                exploerCelluleSuivante(positionI,positionJ);
+            }
+        }
+        else{
+            positionI++;
+        }
+    }
+}
+
