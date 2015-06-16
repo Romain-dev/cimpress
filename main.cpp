@@ -9,19 +9,26 @@ using namespace std;
 int ligne, colonne;
 int squareId = 0;
 Cell** grille;
+Cell** grilleCloned;
 void afficherGrilleIsAvailable(Cell **grille);
 void afficherGrilleValue(Cell **grille);
 void lireFichier(char* path);
 void explorerCelluleSuivante(int positionI, int positionJ);
+void rechercherSolutionOptimale(int i, int j, int squareMaxSize, Cell** currentGrid, int nbSquares);
+void getPositionOfNextCase(Cell** grid, int result[2]);
+void cloneGrid(Cell** gridOriginal, Cell** gridToClone);
 Square* getPlusGrandCarre(int i, int j, Cell** currentGrille);
-
+int nbSquareProvisoire = 0;
 
 int main(int argc, char *argv[])
 {
-    lireFichier("../build/sample/s9.txt");
-    afficherGrilleIsAvailable(grille);
+    lireFichier("../build/sample/new/s1.txt");
+    cloneGrid(grille,grilleCloned);
     afficherGrilleValue(grille);
     explorerCelluleSuivante(0,0);
+    afficherGrilleValue(grille);
+
+    rechercherSolutionOptimale(0,0,20,grilleCloned,0);
     return 1;
 }
 
@@ -46,6 +53,12 @@ void lireFichier(char* path)
     for(int i=0;i<ligne;i++)
     {
         grille[i] = new Cell[colonne];
+    }
+
+    grilleCloned = new Cell*[ligne];
+    for(int i=0;i<ligne;i++)
+    {
+        grilleCloned[i] = new Cell[colonne];
     }
     int index = 0;
     for(int i=0;i<ligne;i++)
@@ -98,6 +111,7 @@ void explorerCelluleSuivante(int positionI, int positionJ)
             if(grille[positionI][positionJ].getIsAvailable() && grille[positionI][positionJ].getValue() == 0)
             {
                 getPlusGrandCarre(positionI, positionJ, grille);
+                nbSquareProvisoire++;
                 explorerCelluleSuivante(positionI,++positionJ);
 
             }
@@ -127,7 +141,6 @@ void remplirGrilleAvecNouveauCarre(Square *carre)
             grille[i][j].setValue(squareId);
         }
     }
-    afficherGrilleValue(grille);
 }
 Square* getPlusGrandCarre(int i, int j, Cell** currentGrille)
 {
@@ -172,4 +185,51 @@ Square* getPlusGrandCarre(int i, int j, Cell** currentGrille)
     Square *square = new Square(size, i, j);
     remplirGrilleAvecNouveauCarre(square);
     return square;
+}
+
+void rechercherSolutionOptimale(int i, int j, int squareMaxSize, Cell** currentGrid, int nbSquares)
+{
+    if(i < ligne && j < colonne)
+    {
+        int result[2] = {-1,-1};
+        getPositionOfNextCase(currentGrid,result);
+        cout << result[0] << " " << result[1] << endl;
+    }
+    else
+    {
+
+    }
+}
+
+void getPositionOfNextCase(Cell** grid, int result[2])
+{
+    for(int i=0;i<ligne;i++)
+    {
+        for(int y=0;y<colonne;y++)
+        {
+            if(grid[i][y].getValue() == 0 && grid[i][y].getIsAvailable())
+            {
+                result[0] = i;
+                result[1] = y;
+                return;
+            }
+        }
+    }
+
+    return;
+}
+
+void cloneGrid(Cell** gridOriginal, Cell** gridToClone)
+{
+    for(int i=0;i<ligne;i++)
+    {
+        for(int y=0;y<colonne;y++)
+        {
+            Cell *cellule = new Cell();
+            cellule->setIsAvailable(gridOriginal[i][y].getIsAvailable());
+            cellule->setValue(gridOriginal[i][y].getValue());
+
+            gridToClone[i][y] = *cellule;
+        }
+    }
 }
