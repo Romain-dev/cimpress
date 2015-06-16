@@ -32,8 +32,6 @@ int main(int argc, char *argv[])
     return 1;
 }
 
-
-
 void lireFichier(char* path)
 {
     QFile inputSudoku(path);
@@ -127,7 +125,7 @@ void explorerCelluleSuivante(int positionI, int positionJ)
         }
     }
 }
-void remplirGrilleAvecNouveauCarre(Square *carre)
+void remplirGrilleAvecNouveauCarre(Square *carre, Cell** grid)
 {
     squareId ++;
     if(squareId == 10) {
@@ -138,7 +136,7 @@ void remplirGrilleAvecNouveauCarre(Square *carre)
     {
         for(int j=carre->getPositionJ();j<carre->getLargeur() +carre->getPositionJ() ;j++)
         {
-            grille[i][j].setValue(squareId);
+            grid[i][j].setValue(squareId);
         }
     }
 }
@@ -183,24 +181,21 @@ Square* getPlusGrandCarre(int i, int j, Cell** currentGrille)
     }
 
     Square *square = new Square(size, i, j);
-    remplirGrilleAvecNouveauCarre(square);
+    remplirGrilleAvecNouveauCarre(square,currentGrille);
     return square;
 }
-
 void rechercherSolutionOptimale(int i, int j, int squareMaxSize, Cell** currentGrid, int nbSquares)
 {
-    if(i < ligne && j < colonne)
-    {
-        int result[2] = {-1,-1};
-        getPositionOfNextCase(currentGrid,result);
-        cout << result[0] << " " << result[1] << endl;
-    }
-    else
-    {
+    Square *square = getPlusGrandCarre(i,j,currentGrid);
+    afficherGrilleValue(currentGrid);
+    int coord[2] = {-1,-1};
+    getPositionOfNextCase(currentGrid,coord);
 
+    if(coord[0] != -1 && coord[1] != -1)
+    {
+        rechercherSolutionOptimale(coord[0], coord[1], squareMaxSize, currentGrid, ++nbSquares);
     }
 }
-
 void getPositionOfNextCase(Cell** grid, int result[2])
 {
     for(int i=0;i<ligne;i++)
@@ -218,7 +213,6 @@ void getPositionOfNextCase(Cell** grid, int result[2])
 
     return;
 }
-
 void cloneGrid(Cell** gridOriginal, Cell** gridToClone)
 {
     for(int i=0;i<ligne;i++)
