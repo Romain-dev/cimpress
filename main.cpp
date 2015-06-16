@@ -36,7 +36,30 @@ Square* getPlusGrandCarre(int i, int j, Cell** currentGrille)
 
     while(canContinu)
     {
+        if (i+size < colonne && j+size < ligne)
+        {
+            bool isOk = true;
+            for(int ii = i; ii<= i+size; ii++)
+            {
+                for(int jj = j; jj<= j+size; jj++)
+                {
+                    if(!currentGrille[ii][jj].getIsAvailable())
+                    {
+                        isOk = false;
+                        break;
+                    }
+                }
+            }
 
+            if(isOk)
+            {
+                size++;
+            }
+        }
+        else
+        {
+            canContinu = true;
+        }
     }
 
     Square *square = new Square(size, i, j);
