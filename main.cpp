@@ -12,7 +12,7 @@ Cell** grille;
 void afficherGrilleIsAvailable(Cell **grille);
 void afficherGrilleValue(Cell **grille);
 void lireFichier(char* path);
-void exploerCelluleSuivante(int positionI, int positionJ);
+void explorerCelluleSuivante(int positionI, int positionJ);
 Square* getPlusGrandCarre(int i, int j, Cell** currentGrille);
 
 
@@ -21,50 +21,12 @@ int main(int argc, char *argv[])
     lireFichier("../build/sample/s9.txt");
     afficherGrilleIsAvailable(grille);
     afficherGrilleValue(grille);
-    exploerCelluleSuivante(0,0);
+    explorerCelluleSuivante(0,0);
+    getPlusGrandCarre(5, 3, grille);
     return 1;
 }
 
-Square* getPlusGrandCarre(int i, int j, Cell** currentGrille)
-{
-    int size = 1;
-    bool canContinu = true;
 
-    if(!currentGrille[i][j].getIsAvailable()) {
-        return NULL;
-    }
-
-    while(canContinu)
-    {
-        if (i+size < colonne && j+size < ligne)
-        {
-            bool isOk = true;
-            for(int ii = i; ii<= i+size; ii++)
-            {
-                for(int jj = j; jj<= j+size; jj++)
-                {
-                    if(!currentGrille[ii][jj].getIsAvailable())
-                    {
-                        isOk = false;
-                        break;
-                    }
-                }
-            }
-
-            if(isOk)
-            {
-                size++;
-            }
-        }
-        else
-        {
-            canContinu = true;
-        }
-    }
-
-    Square *square = new Square(size, i, j);
-    return square;
-}
 
 void lireFichier(char* path)
 {
@@ -128,31 +90,82 @@ void afficherGrilleValue(Cell **grille)
         cout << endl;
     }
 }
-void exploerCelluleSuivante(int positionI, int positionJ)
+void explorerCelluleSuivante(int positionI, int positionJ)
 {
     if(positionI < ligne)
     {
         if(positionJ < colonne)
         {
-            if(grille[positionI][positionJ].getIsAvailable())
+            if(grille[positionI][positionJ].getIsAvailable() && grille[positionI][positionJ].getValue() == 0)
             {
-                cout << "Explore" << endl;
-                exploerCelluleSuivante(positionI,positionJ);
+                getPlusGrandCarre(positionI, positionJ, grille);
+                explorerCelluleSuivante(positionI,++positionJ);
+
+            }
+            else{
+                positionJ++;
+                explorerCelluleSuivante(positionI,positionJ);
             }
         }
         else{
             positionI++;
+            positionJ = 0;
+            explorerCelluleSuivante(positionI,positionJ);
         }
     }
 }
 void remplirGrilleAvecNouveauCarre(Square *carre)
 {
-    for(int i=carre->getPositionI();i<carre->getLargeur();i++)
+    for(int i=carre->getPositionI();i<carre->getLargeur() + carre->getPositionI();i++)
     {
-        for(int j=carre->getPositionJ();j<carre->getLargeur();j++)
+        for(int j=carre->getPositionJ();j<carre->getLargeur() +carre->getPositionJ() ;j++)
         {
-            grille[i][j].setValue(1);
+            grille[i][j].setValue(2);
         }
     }
     afficherGrilleValue(grille);
+}
+Square* getPlusGrandCarre(int i, int j, Cell** currentGrille)
+{
+    int size = 1;
+    bool canContinu = true;
+
+    if(!currentGrille[i][j].getIsAvailable()) {
+        return NULL;
+    }
+
+    while(canContinu)
+    {
+        if (i+size < colonne && j+size < ligne)
+        {
+            bool isOk = true;
+            for(int ii = i; ii<= i+size; ii++)
+            {
+                for(int jj = j; jj<= j+size; jj++)
+                {
+                    if(!currentGrille[ii][jj].getIsAvailable())
+                    {
+                        isOk = false;
+                        break;
+                    }
+                }
+            }
+
+            if(isOk)
+            {
+                size++;
+            }
+            else{
+                canContinu = false;
+            }
+        }
+        else
+        {
+            canContinu = false;
+        }
+    }
+
+    Square *square = new Square(size, i, j);
+    remplirGrilleAvecNouveauCarre(square);
+    return square;
 }
