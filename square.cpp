@@ -3,6 +3,13 @@
 Square::Square()
 {
 }
+Square::Square(int largeur, int positionI, int positionJ)
+{
+    this->largeur = largeur;
+    this->positionI = positionI;
+    this->positionJ = positionJ;
+}
+
 int Square::getLargeur()
 {
     return this->largeur;

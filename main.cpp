@@ -39,11 +39,7 @@ Square* getPlusGrandCarre(int i, int j, Cell** currentGrille)
 
     }
 
-    Square *square = new Square();
-    square->setLargeur(size);
-    square->setPositionI(i);
-    square->setPositionJ(j);
-
+    Square *square = new Square(size, i, j);
     return square;
 }
 
@@ -126,4 +122,14 @@ void exploerCelluleSuivante(int positionI, int positionJ)
         }
     }
 }
-
+void remplirGrilleAvecNouveauCarre(Square *carre)
+{
+    for(int i=carre->getPositionI();i<carre->getLargeur();i++)
+    {
+        for(int j=carre->getPositionJ();j<carre->getLargeur();j++)
+        {
+            grille[i][j].setValue(1);
+        }
+    }
+    afficherGrilleValue(grille);
+}

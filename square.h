@@ -5,6 +5,7 @@ class Square
 {
 public:
     Square();
+    Square(int largeur, int positionI, int positionJ);
 private:
     int largeur;
     int positionI;
