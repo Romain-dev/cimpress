@@ -10,6 +10,7 @@ int ligne, colonne;
 int squareId = 0;
 Cell** grille;
 Cell** grilleCloned;
+void remplirGrilleAvecNouveauCarre(Square *carre, Cell** grid);
 void afficherGrilleIsAvailable(Cell **grille);
 void afficherGrilleValue(Cell **grille);
 void lireFichier(char* path);
@@ -19,16 +20,26 @@ void getPositionOfNextCase(Cell** grid, int result[2]);
 void cloneGrid(Cell** gridOriginal, Cell** gridToClone);
 Square* getPlusGrandCarre(int i, int j, Cell** currentGrille);
 int nbSquareProvisoire = 0;
+int nbRecursions= 0;
 
 int main(int argc, char *argv[])
 {
-    lireFichier("../build/sample/new/s1.txt");
+    lireFichier("../build/sample/s9.txt");
     cloneGrid(grille,grilleCloned);
-    afficherGrilleValue(grille);
+    //afficherGrilleValue(grille);
     explorerCelluleSuivante(0,0);
+
+    cout << "Solution de base: " << endl;
     afficherGrilleValue(grille);
+    cout << "Nombre de carrées: " << nbSquareProvisoire << endl;
 
     rechercherSolutionOptimale(0,0,20,grilleCloned,0);
+    cout << endl;
+    cout << "Solution Optimale: " << endl;
+    afficherGrilleValue(grille);
+    cout << "Nombre de carrées: " << nbSquareProvisoire << endl;
+    cout << "Nombre de récursions: " << nbRecursions << endl;
+    cout << endl;
     return 1;
 }
 
@@ -45,7 +56,7 @@ void lireFichier(char* path)
     QString text = stream.readLine();
     colonne = text.at(0).digitValue();
     text = stream.readLine();
-    ligne = text.at(0).digitValue();
+    ligne = text.at(0).digitValue();;
     text = stream.readLine(ligne*colonne*8);
     grille = new Cell*[ligne];
     for(int i=0;i<ligne;i++)
@@ -84,7 +95,6 @@ void afficherGrilleIsAvailable(Cell **grille)
 }
 void afficherGrilleValue(Cell **grille)
 {
-    cout << "Affichage matrice " << endl;
     for(int i=0;i<ligne;i++)
     {
         for(int y=0;y<colonne;y++)
@@ -108,7 +118,8 @@ void explorerCelluleSuivante(int positionI, int positionJ)
         {
             if(grille[positionI][positionJ].getIsAvailable() && grille[positionI][positionJ].getValue() == 0)
             {
-                getPlusGrandCarre(positionI, positionJ, grille);
+                Square *square = getPlusGrandCarre(positionI, positionJ, grille);
+                remplirGrilleAvecNouveauCarre(square,grille);
                 nbSquareProvisoire++;
                 explorerCelluleSuivante(positionI,++positionJ);
 
@@ -128,7 +139,7 @@ void explorerCelluleSuivante(int positionI, int positionJ)
 void remplirGrilleAvecNouveauCarre(Square *carre, Cell** grid)
 {
     squareId ++;
-    if(squareId == 10) {
+    if(squareId >= 10) {
         squareId = 1;
     }
 
@@ -142,10 +153,6 @@ void remplirGrilleAvecNouveauCarre(Square *carre, Cell** grid)
 }
 void supprimerGrilleAvecCarre(Square *carre, Cell** grid)
 {
-    squareId --;
-    if(squareId == 1) {
-        squareId = 9;
-    }
 
     for(int i=carre->getPositionI();i<carre->getLargeur() + carre->getPositionI();i++)
     {
@@ -196,11 +203,12 @@ Square* getPlusGrandCarre(int i, int j, Cell** currentGrille)
     }
 
     Square *square = new Square(size, i, j);
-    remplirGrilleAvecNouveauCarre(square,currentGrille);
     return square;
 }
 void rechercherSolutionOptimale(int i, int j, int squareMaxSize, Cell** currentGrid, int nbSquares)
 {
+    nbRecursions++;
+
     //Couper la branche
     if(nbSquares >= nbSquareProvisoire)
     {
@@ -208,17 +216,36 @@ void rechercherSolutionOptimale(int i, int j, int squareMaxSize, Cell** currentG
     }
 
     Square *square = getPlusGrandCarre(i,j,currentGrid);
-    afficherGrilleValue(currentGrid);
-    int coord[2] = {-1,-1};
-    getPositionOfNextCase(currentGrid,coord);
-
-    if(coord[0] != -1 && coord[1] != -1)
+    nbSquares++;
+    for(int i = 1; i <= square->getLargeur(); i++)
     {
-        rechercherSolutionOptimale(coord[0], coord[1], squareMaxSize, currentGrid, ++nbSquares);
-    }
+       Square *squareScoped = new Square(i,square->getPositionI(),square->getPositionJ());
 
-    supprimerGrilleAvecCarre(square,currentGrid);
-    afficherGrilleValue(currentGrid);
+       remplirGrilleAvecNouveauCarre(squareScoped,currentGrid);
+       int coord[2] = {-1,-1};
+       getPositionOfNextCase(currentGrid,coord);
+
+       //C'est un noeud
+       if(coord[0] != -1 && coord[1] != -1)
+       {
+           rechercherSolutionOptimale(coord[0], coord[1], squareMaxSize, currentGrid, nbSquares);
+       }
+       //C'est une feuille solution optimale
+       else
+       {
+            cout << endl;
+            cout<<"NouvelleSolutionOptimale"<<endl;
+            nbSquareProvisoire = nbSquares;
+
+            cloneGrid(currentGrid,grille);
+            afficherGrilleValue(grilleCloned);
+            cout << "Nombre de carrées: " << nbSquareProvisoire << endl;
+            nbSquares--;
+
+       }
+
+       supprimerGrilleAvecCarre(square,currentGrid);
+    }
 }
 void getPositionOfNextCase(Cell** grid, int result[2])
 {
