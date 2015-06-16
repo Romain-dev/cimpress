@@ -7,7 +7,7 @@
 
 using namespace std;
 int ligne, colonne;
-
+int squareId = 0;
 Cell** grille;
 void afficherGrilleIsAvailable(Cell **grille);
 void afficherGrilleValue(Cell **grille);
@@ -22,7 +22,6 @@ int main(int argc, char *argv[])
     afficherGrilleIsAvailable(grille);
     afficherGrilleValue(grille);
     explorerCelluleSuivante(0,0);
-    getPlusGrandCarre(5, 3, grille);
     return 1;
 }
 
@@ -116,11 +115,16 @@ void explorerCelluleSuivante(int positionI, int positionJ)
 }
 void remplirGrilleAvecNouveauCarre(Square *carre)
 {
+    squareId ++;
+    if(squareId == 10) {
+        squareId = 1;
+    }
+
     for(int i=carre->getPositionI();i<carre->getLargeur() + carre->getPositionI();i++)
     {
         for(int j=carre->getPositionJ();j<carre->getLargeur() +carre->getPositionJ() ;j++)
         {
-            grille[i][j].setValue(2);
+            grille[i][j].setValue(squareId);
         }
     }
     afficherGrilleValue(grille);
@@ -136,14 +140,14 @@ Square* getPlusGrandCarre(int i, int j, Cell** currentGrille)
 
     while(canContinu)
     {
-        if (i+size < colonne && j+size < ligne)
+        if (i+size < ligne && j+size < colonne)
         {
             bool isOk = true;
             for(int ii = i; ii<= i+size; ii++)
             {
                 for(int jj = j; jj<= j+size; jj++)
                 {
-                    if(!currentGrille[ii][jj].getIsAvailable())
+                    if(!currentGrille[ii][jj].getIsAvailable() || currentGrille[ii][jj].getValue()!=0)
                     {
                         isOk = false;
                         break;
