@@ -13,20 +13,23 @@ void afficherGrilleIsAvailable(Cell **grille);
 void afficherGrilleValue(Cell **grille);
 void lireFichier(char* path);
 void explorerCelluleSuivante(int positionI, int positionJ);
+void rechercherSolutionOptimale(int positionI, int positionJ);
 Square* getPlusGrandCarre(int i, int j, Cell** currentGrille);
-
-
+int currentSolutionNbSquare = 0;
+int bestSolutionNbSquare = 0;
+Cell** grilleCurrentSolution;
+void viderGrille(Cell** grille);
 int main(int argc, char *argv[])
 {
-    lireFichier("../build/sample/s9.txt");
+    lireFichier("../build/sample/s2.txt");
     afficherGrilleIsAvailable(grille);
     afficherGrilleValue(grille);
-    explorerCelluleSuivante(0,0);
+    //explorerCelluleSuivante(0,0);
+    rechercherSolutionOptimale(0,0);
+    afficherGrilleValue(grille);
+    cout << "Best Solution Nb Square : " << bestSolutionNbSquare << endl;
     return 1;
 }
-
-
-
 void lireFichier(char* path)
 {
     QFile inputSudoku(path);
@@ -41,8 +44,11 @@ void lireFichier(char* path)
     colonne = text.at(0).digitValue();
     text = stream.readLine();
     ligne = text.at(0).digitValue();
+    ligne = 12;
+    colonne = 10;
     text = stream.readLine(ligne*colonne*8);
     grille = new Cell*[ligne];
+
     for(int i=0;i<ligne;i++)
     {
         grille[i] = new Cell[colonne];
@@ -56,7 +62,18 @@ void lireFichier(char* path)
             grille[i][j] = cellule;
             index ++;
         }
-
+    }
+    grilleCurrentSolution = new Cell*[ligne];
+    for(int i=0;i<ligne;i++)
+    {
+        grilleCurrentSolution[i] = new Cell[colonne];
+    }
+    for(int i=0;i<ligne;i++)
+    {
+        for(int j=0;j<colonne;j++)
+        {
+            grilleCurrentSolution[i][j] = grille[i][j];
+        }
     }
 }
 void afficherGrilleIsAvailable(Cell **grille)
@@ -93,13 +110,12 @@ void explorerCelluleSuivante(int positionI, int positionJ)
 {
     if(positionI < ligne)
     {
-        if(positionJ < colonne)
+       if(positionJ < colonne)
         {
             if(grille[positionI][positionJ].getIsAvailable() && grille[positionI][positionJ].getValue() == 0)
             {
-                getPlusGrandCarre(positionI, positionJ, grille);
+                getPlusGrandCarre(positionI, positionJ, grilleCurrentSolution);
                 explorerCelluleSuivante(positionI,++positionJ);
-
             }
             else{
                 positionJ++;
@@ -127,7 +143,7 @@ void remplirGrilleAvecNouveauCarre(Square *carre)
             grille[i][j].setValue(squareId);
         }
     }
-    afficherGrilleValue(grille);
+    //afficherGrilleValue(grille);
 }
 Square* getPlusGrandCarre(int i, int j, Cell** currentGrille)
 {
@@ -171,5 +187,47 @@ Square* getPlusGrandCarre(int i, int j, Cell** currentGrille)
 
     Square *square = new Square(size, i, j);
     remplirGrilleAvecNouveauCarre(square);
+    rechercherSolutionOptimale(i, j);
+    currentSolutionNbSquare++;
     return square;
+}
+void rechercherSolutionOptimale(int positionI, int positionJ)
+{
+    if(positionI < ligne)
+    {
+       if(positionJ < colonne)
+        {
+             if(grille[positionI][positionJ].getIsAvailable() && grille[positionI][positionJ].getValue() == 0)
+            {
+                viderGrille(grille);
+                getPlusGrandCarre(positionI, positionJ, grille);
+                explorerCelluleSuivante(positionI,++positionJ);
+                cout << "Current Solution Nb Square : " << currentSolutionNbSquare << endl;
+                if(currentSolutionNbSquare < bestSolutionNbSquare || currentSolutionNbSquare == 0 || bestSolutionNbSquare == 0)
+                {
+                    bestSolutionNbSquare = currentSolutionNbSquare;
+                    cout << "Current Solution Nb Square : " << bestSolutionNbSquare << endl;
+                }
+            }
+            else{
+                positionJ++;
+                explorerCelluleSuivante(positionI,positionJ);
+            }
+        }
+        else{
+            positionI++;
+            positionJ = 0;
+            explorerCelluleSuivante(positionI,positionJ);
+        }
+    }
+}
+void viderGrille(Cell** grille)
+{
+    for(int i=0;i<ligne;i++)
+    {
+        for(int j=0;j<colonne;j++)
+        {
+            grille[i][j].setValue(0);
+        }
+    }
 }
