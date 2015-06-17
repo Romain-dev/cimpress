@@ -4,6 +4,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <square.h>
+#include <QTime>
 
 using namespace std;
 int ligne, colonne;
@@ -24,7 +25,7 @@ int nbRecursions= 0;
 
 int main(int argc, char *argv[])
 {
-    lireFichier("../build/sample/s3.txt");
+    lireFichier("../build/sample/s4.txt");
     cloneGrid(grille,grilleCloned);
     //afficherGrilleValue(grille);
     explorerCelluleSuivante(0,0);
@@ -33,12 +34,17 @@ int main(int argc, char *argv[])
     afficherGrilleValue(grille);
     cout << "Nombre de carrées: " << nbSquareProvisoire << endl;
 
+    QTime time;
+    time.start();
+
     rechercherSolutionOptimale(0,0,20,grilleCloned,0);
+    float difference = time.elapsed();
     cout << endl;
     cout << "Solution Optimale: " << endl;
     afficherGrilleValue(grille);
     cout << "Nombre de carrées: " << nbSquareProvisoire << endl;
     cout << "Nombre de récursions: " << nbRecursions << endl;
+    cout << "Temps CPU : " << difference/1000 << " secondes" << endl;
     cout << endl;
     return 1;
 }
