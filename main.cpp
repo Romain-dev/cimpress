@@ -19,14 +19,14 @@ void explorerCelluleSuivante(int positionI, int positionJ);
 void rechercherSolutionOptimale(int i, int j, int squareMaxSize, Cell** currentGrid, int nbSquares);
 void getPositionOfNextCase(Cell** grid, int result[2]);
 void cloneGrid(Cell** gridOriginal, Cell** gridToClone);
-Square* getPlusGrandCarre(int i, int j, Cell** currentGrille);
+void getPlusGrandCarre(int i, int j, Cell** currentGrille, Square* square);
 int nbSquareProvisoire = 0;
 int nbRecursions= 0;
 
 int main(int argc, char *argv[])
 {
 
-    lireFichier("../build/sample/s1.txt");
+    lireFichier("../build/sample/s13.txt");
     cloneGrid(grille,grilleCloned);
     //afficherGrilleValue(grille);
     explorerCelluleSuivante(0,0);
@@ -120,13 +120,14 @@ void afficherGrilleValue(Cell **grille)
 }
 void explorerCelluleSuivante(int positionI, int positionJ)
 {
+    Square *square = new Square();
     if(positionI < ligne)
     {
         if(positionJ < colonne)
         {
             if(grille[positionI][positionJ].getIsAvailable() && grille[positionI][positionJ].getValue() == 0)
             {
-                Square *square = getPlusGrandCarre(positionI, positionJ, grille);
+                getPlusGrandCarre(positionI, positionJ, grille, square);
                 remplirGrilleAvecNouveauCarre(square,grille);
                 nbSquareProvisoire++;
                 explorerCelluleSuivante(positionI,++positionJ);
@@ -170,13 +171,13 @@ void supprimerGrilleAvecCarre(Square *carre, Cell** grid)
         }
     }
 }
-Square* getPlusGrandCarre(int i, int j, Cell** currentGrille)
+void getPlusGrandCarre(int i, int j, Cell** currentGrille, Square* square)
 {
     int size = 1;
     bool canContinu = true;
 
     if(!currentGrille[i][j].getIsAvailable()) {
-        return NULL;
+        return;
     }
 
     while(canContinu)
@@ -210,25 +211,26 @@ Square* getPlusGrandCarre(int i, int j, Cell** currentGrille)
         }
     }
 
-    Square *square = new Square(size, i, j);
-    return square;
+    square->setLargeur(size);
+    square->setPositionI(i);
+    square->setPositionJ(j);
 }
 void rechercherSolutionOptimale(int i, int j, int squareMaxSize, Cell** currentGrid, int nbSquares)
 {
     nbRecursions++;
-
+    Square *square = new Square();
     //Couper la branche
     if(nbSquares >= nbSquareProvisoire)
     {
+        delete(square);
         return;
     }
 
-    Square *square = getPlusGrandCarre(i,j,currentGrid);
+    getPlusGrandCarre(i,j,currentGrid, square);
     nbSquares++;
     for(int i = square->getLargeur(); i >= 1; i--)
     {
        Square *squareScoped = new Square(i,square->getPositionI(),square->getPositionJ());
-
        remplirGrilleAvecNouveauCarre(squareScoped,currentGrid);
        int coord[2] = {-1,-1};
        getPositionOfNextCase(currentGrid,coord);
@@ -251,9 +253,10 @@ void rechercherSolutionOptimale(int i, int j, int squareMaxSize, Cell** currentG
             nbSquares--;
 
        }
-
        supprimerGrilleAvecCarre(square,currentGrid);
+       delete(squareScoped);
     }
+    delete(square);
 }
 void getPositionOfNextCase(Cell** grid, int result[2])
 {
