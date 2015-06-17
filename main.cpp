@@ -26,8 +26,8 @@ int nbRecursions= 0;
 int main(int argc, char *argv[])
 {
 
-    lireFichier("../build/sample/new/s1.txt");
-
+    lireFichier("../build/sample/s1.txt");
+    cloneGrid(grille,grilleCloned);
     //afficherGrilleValue(grille);
     explorerCelluleSuivante(0,0);
 
