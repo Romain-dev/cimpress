@@ -24,7 +24,7 @@ int nbRecursions= 0;
 
 int main(int argc, char *argv[])
 {
-    lireFichier("../build/sample/s9.txt");
+    lireFichier("../build/sample/new/s1.txt");
     cloneGrid(grille,grilleCloned);
     //afficherGrilleValue(grille);
     explorerCelluleSuivante(0,0);
@@ -217,7 +217,7 @@ void rechercherSolutionOptimale(int i, int j, int squareMaxSize, Cell** currentG
 
     Square *square = getPlusGrandCarre(i,j,currentGrid);
     nbSquares++;
-    for(int i = 1; i <= square->getLargeur(); i++)
+    for(int i = square->getLargeur(); i >= 1; i--)
     {
        Square *squareScoped = new Square(i,square->getPositionI(),square->getPositionJ());
 
