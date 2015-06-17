@@ -30,7 +30,7 @@ bool flagStopTimer = false;
 int main(int argc, char *argv[])
 {
 
-    lireFichier("../build/sample/s1.txt");
+    lireFichier("../build/sample/s6.txt");
     analysePossibilite();
 
     cloneGrid(grille,grilleCloned);
@@ -243,7 +243,7 @@ void rechercherSolutionOptimale(int i, int j, int squareMaxSize, Cell** currentG
         flagStopTimer = true;
         return;
     }
-
+    nbRecursions++;
     Square *square = new Square();
     //Couper la branche
     if(nbSquares >= nbSquareProvisoire)
@@ -264,7 +264,6 @@ void rechercherSolutionOptimale(int i, int j, int squareMaxSize, Cell** currentG
        //C'est un noeud
        if(coord[0] != -1 && coord[1] != -1)
        {
-           nbRecursions++;
            rechercherSolutionOptimale(coord[0], coord[1], squareMaxSize, currentGrid, nbSquares);
        }
        //C'est une feuille solution optimale
