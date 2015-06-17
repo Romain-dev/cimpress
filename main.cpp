@@ -24,7 +24,7 @@ int nbRecursions= 0;
 
 int main(int argc, char *argv[])
 {
-    lireFichier("../build/sample/s9.txt");
+    lireFichier("../build/sample/s3.txt");
     cloneGrid(grille,grilleCloned);
     //afficherGrilleValue(grille);
     explorerCelluleSuivante(0,0);
@@ -53,11 +53,12 @@ void lireFichier(char* path)
     }
 
     QTextStream stream(&inputSudoku);
-    QString text = stream.readLine();
-    colonne = text.at(0).digitValue();
-    text = stream.readLine();
-    ligne = text.at(0).digitValue();;
+    QString text = stream.readLine(sizeof(int));
+    colonne = text.toInt();
+    text = stream.readLine(sizeof(int));
+    ligne = text.toInt();
     text = stream.readLine(ligne*colonne*8);
+
     grille = new Cell*[ligne];
     for(int i=0;i<ligne;i++)
     {
