@@ -4,6 +4,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <square.h>
+#include <QTime>
 
 using namespace std;
 int ligne, colonne;
@@ -24,8 +25,9 @@ int nbRecursions= 0;
 
 int main(int argc, char *argv[])
 {
+
     lireFichier("../build/sample/new/s1.txt");
-    cloneGrid(grille,grilleCloned);
+
     //afficherGrilleValue(grille);
     explorerCelluleSuivante(0,0);
 
@@ -33,12 +35,17 @@ int main(int argc, char *argv[])
     afficherGrilleValue(grille);
     cout << "Nombre de carrées: " << nbSquareProvisoire << endl;
 
+    QTime time;
+    time.start();
+
     rechercherSolutionOptimale(0,0,20,grilleCloned,0);
+    float difference = time.elapsed();
     cout << endl;
     cout << "Solution Optimale: " << endl;
     afficherGrilleValue(grille);
     cout << "Nombre de carrées: " << nbSquareProvisoire << endl;
     cout << "Nombre de récursions: " << nbRecursions << endl;
+    cout << "Temps CPU : " << difference/1000 << " secondes" << endl;
     cout << endl;
     return 1;
 }
@@ -53,11 +60,12 @@ void lireFichier(char* path)
     }
 
     QTextStream stream(&inputSudoku);
-    QString text = stream.readLine();
-    colonne = text.at(0).digitValue();
-    text = stream.readLine();
-    ligne = text.at(0).digitValue();;
+    QString text = stream.readLine(sizeof(int));
+    colonne = text.toInt();
+    text = stream.readLine(sizeof(int));
+    ligne = text.toInt();
     text = stream.readLine(ligne*colonne*8);
+
     grille = new Cell*[ligne];
     for(int i=0;i<ligne;i++)
     {
