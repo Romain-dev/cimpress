@@ -8,7 +8,7 @@
 
 using namespace std;
 int ligne, colonne;
-int squareId = 0;
+int squareId = 10;
 Cell** grille;
 Cell** grilleCloned;
 void remplirGrilleAvecNouveauCarre(Square *carre, Cell** grid);
@@ -25,7 +25,6 @@ int nbRecursions= 0;
 
 int main(int argc, char *argv[])
 {
-
     lireFichier("../build/sample/s4.txt");
     cloneGrid(grille,grilleCloned);
     //afficherGrilleValue(grille);
@@ -114,7 +113,7 @@ void afficherGrilleValue(Cell **grille)
                 cout << grille[i][y].getValue() <<  " ";
             }
             else{
-                cout << "  ";
+                cout << "   ";
             }
         }
         cout << endl;
@@ -150,8 +149,8 @@ void explorerCelluleSuivante(int positionI, int positionJ)
 void remplirGrilleAvecNouveauCarre(Square *carre, Cell** grid)
 {
     squareId ++;
-    if(squareId >= 10) {
-        squareId = 1;
+    if(squareId >= 100) {
+        squareId = 10;
     }
 
     for(int i=carre->getPositionI();i<carre->getLargeur() + carre->getPositionI();i++)
