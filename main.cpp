@@ -26,10 +26,12 @@ int nbRecursions= 0;
 int main(int argc, char *argv[])
 {
 
-    lireFichier("../build/sample/s13.txt");
+    lireFichier("../build/sample/s4.txt");
     cloneGrid(grille,grilleCloned);
     //afficherGrilleValue(grille);
-    explorerCelluleSuivante(0,0);
+    int position[2] = {-1,-1};
+    getPositionOfNextCase(grille,position);
+    explorerCelluleSuivante(position[0],position[1]);
 
     cout << "Solution de base: " << endl;
     afficherGrilleValue(grille);
@@ -37,8 +39,8 @@ int main(int argc, char *argv[])
 
     QTime time;
     time.start();
-
-    rechercherSolutionOptimale(0,0,20,grilleCloned,0);
+    getPositionOfNextCase(grilleCloned,position);
+    rechercherSolutionOptimale(position[0],position[1],20,grilleCloned,0);
     float difference = time.elapsed();
     cout << endl;
     cout << "Solution Optimale: " << endl;
