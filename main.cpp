@@ -238,7 +238,7 @@ void getPlusGrandCarre(int i, int j, Cell** currentGrille, Square* square)
 }
 void rechercherSolutionOptimale(int i, int j, int squareMaxSize, Cell** currentGrid, int nbSquares)
 {
-    if(nbRecursions % 10000000 == 0 && timer.elapsed() > 12000)
+    if(nbRecursions % 10000000 == 0 && timer.elapsed() > 120000)
     {
         flagStopTimer = true;
         return;
