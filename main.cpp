@@ -8,7 +8,7 @@
 
 using namespace std;
 int ligne, colonne;
-int squareId = 0;
+int squareId = 10;
 Cell** grille;
 Cell** grilleCloned;
     QTime timer;
@@ -32,9 +32,12 @@ int main(int argc, char *argv[])
 
     lireFichier("../build/sample/s6.txt");
     analysePossibilite();
+
     cloneGrid(grille,grilleCloned);
     //afficherGrilleValue(grille);
-    explorerCelluleSuivante(0,0);
+    int position[2] = {-1,-1};
+    getPositionOfNextCase(grille,position);
+    explorerCelluleSuivante(position[0],position[1]);
 
     cout << "Solution de base: " << endl;
     afficherGrilleValue(grille);
@@ -42,8 +45,10 @@ int main(int argc, char *argv[])
 
 
     timer.start();
-    rechercherSolutionOptimale(0,0,20,grilleCloned,0);
+    getPositionOfNextCase(grilleCloned,position);
+    rechercherSolutionOptimale(position[0],position[1],20,grilleCloned,0);
     float difference = timer.elapsed();
+
     cout << endl;
     cout << "Solution Optimale: " << endl;
     afficherGrilleValue(grille);
@@ -128,7 +133,7 @@ void afficherGrilleValue(Cell **grille)
                 cout << grille[i][y].getValue() <<  " ";
             }
             else{
-                cout << "  ";
+                cout << "   ";
             }
         }
         cout << endl;
@@ -164,8 +169,8 @@ void explorerCelluleSuivante(int positionI, int positionJ)
 void remplirGrilleAvecNouveauCarre(Square *carre, Cell** grid)
 {
     squareId ++;
-    if(squareId >= 10) {
-        squareId = 1;
+    if(squareId >= 100) {
+        squareId = 10;
     }
 
     for(int i=carre->getPositionI();i<carre->getLargeur() + carre->getPositionI();i++)
