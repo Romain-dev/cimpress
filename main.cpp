@@ -11,6 +11,7 @@ int ligne, colonne;
 int squareId = 0;
 Cell** grille;
 Cell** grilleCloned;
+    QTime timer;
 void remplirGrilleAvecNouveauCarre(Square *carre, Cell** grid);
 void afficherGrilleIsAvailable(Cell **grille);
 void afficherGrilleValue(Cell **grille);
@@ -20,13 +21,17 @@ void rechercherSolutionOptimale(int i, int j, int squareMaxSize, Cell** currentG
 void getPositionOfNextCase(Cell** grid, int result[2]);
 void cloneGrid(Cell** gridOriginal, Cell** gridToClone);
 void getPlusGrandCarre(int i, int j, Cell** currentGrille, Square* square);
+void analysePossibilite();
 int nbSquareProvisoire = 0;
 int nbRecursions= 0;
-
+int nbTrous = 0;
+int nbVariables = 0;
+bool flagStopTimer = false;
 int main(int argc, char *argv[])
 {
 
-    lireFichier("../build/sample/s13.txt");
+    lireFichier("../build/sample/s6.txt");
+    analysePossibilite();
     cloneGrid(grille,grilleCloned);
     //afficherGrilleValue(grille);
     explorerCelluleSuivante(0,0);
@@ -35,16 +40,23 @@ int main(int argc, char *argv[])
     afficherGrilleValue(grille);
     cout << "Nombre de carrées: " << nbSquareProvisoire << endl;
 
-    QTime time;
-    time.start();
 
+    timer.start();
     rechercherSolutionOptimale(0,0,20,grilleCloned,0);
-    float difference = time.elapsed();
+    float difference = timer.elapsed();
     cout << endl;
     cout << "Solution Optimale: " << endl;
     afficherGrilleValue(grille);
+    cout << "Hauteur : " << ligne << endl;
+    cout << "Largeur : " << colonne << endl;
+    cout << "Nombre trous : " << nbTrous << endl;
+    cout << "Nombre variables : " << nbVariables << endl;
     cout << "Nombre de carrées: " << nbSquareProvisoire << endl;
     cout << "Nombre de récursions: " << nbRecursions << endl;
+    if(flagStopTimer)
+    {
+        cout << "Temps de traitement superieur a 2 minutes, arret du programme" << endl;
+    }
     cout << "Temps CPU : " << difference/1000 << " secondes" << endl;
     cout << endl;
     return 1;
@@ -84,6 +96,10 @@ void lireFichier(char* path)
         {
             Cell cellule(!text.at(index).digitValue(), 0);
             grille[i][j] = cellule;
+            if(text.at(index).digitValue() == 1)
+            {
+                nbTrous++;
+            }
             index ++;
         }
 
@@ -217,6 +233,11 @@ void getPlusGrandCarre(int i, int j, Cell** currentGrille, Square* square)
 }
 void rechercherSolutionOptimale(int i, int j, int squareMaxSize, Cell** currentGrid, int nbSquares)
 {
+    if(nbRecursions % 10000000 == 0 && timer.elapsed() > 12000)
+    {
+        flagStopTimer = true;
+        return;
+    }
     nbRecursions++;
     Square *square = new Square();
     //Couper la branche
@@ -286,6 +307,21 @@ void cloneGrid(Cell** gridOriginal, Cell** gridToClone)
             cellule->setValue(gridOriginal[i][y].getValue());
 
             gridToClone[i][y] = *cellule;
+        }
+    }
+}
+void analysePossibilite()
+{
+    Square* square = new Square();
+    for(int i=0;i<ligne;i++)
+    {
+        for(int j=0;j<colonne;j++)
+        {
+            if(grille[i][j].getIsAvailable())
+            {
+                getPlusGrandCarre(i,j,grille,square);
+                nbVariables += square->getLargeur();
+            }
         }
     }
 }
