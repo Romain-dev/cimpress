@@ -35,7 +35,7 @@ bool flagStopTimer = false;
 int main(int argc, char *argv[])
 {
 
-    lireFichier("../build/sample/s4.txt");
+    lireFichier("../build/sample/s13.txt");
     analysePossibilite();
 
     cloneGrid(grille,grilleCloned);
@@ -339,6 +339,7 @@ void cloneGrid(Cell** gridOriginal, Cell** gridToClone)
         }
     }
 }
+//Calcul nombre de variables binaires
 void analysePossibilite()
 {
     Square* square = new Square();
@@ -346,9 +347,12 @@ void analysePossibilite()
     {
         for(int j=0;j<colonne;j++)
         {
+            //Uniquement si la case est disponible
             if(grille[i][j].getIsAvailable())
             {
+                //Calcul a largeur du plus grand carré possible
                 getPlusGrandCarre(i,j,grille,square);
+                //Ajoute la largeur au nombre de variables binaires
                 nbVariables += square->getLargeur();
             }
         }
