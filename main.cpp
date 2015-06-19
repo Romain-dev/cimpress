@@ -21,7 +21,7 @@ void afficherGrilleIsAvailable(Cell **grille);
 void afficherGrilleValue(Cell **grille);
 void lireFichier(char* path);
 void explorerCelluleSuivante(int positionI, int positionJ);
-void rechercherSolutionOptimale(int i, int j, int squareMaxSize, Cell** currentGrid, int nbSquares);
+void rechercherSolutionOptimale(int i, int j, Cell** currentGrid, int nbSquares);
 void getPositionOfNextCase(Cell** grid, int result[2]);
 void cloneGrid(Cell** gridOriginal, Cell** gridToClone);
 void getPlusGrandCarre(int i, int j, Cell** currentGrille, Square* square);
@@ -35,7 +35,7 @@ bool flagStopTimer = false;
 int main(int argc, char *argv[])
 {
 
-    lireFichier("../build/sample/s1.txt");
+    lireFichier("../build/sample/s4.txt");
     analysePossibilite();
 
     cloneGrid(grille,grilleCloned);
@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
 
     timer.start();
     getPositionOfNextCase(grilleCloned,position);
-    rechercherSolutionOptimale(position[0],position[1],20,grilleCloned,0);
+    rechercherSolutionOptimale(position[0],position[1],grilleCloned,0);
     float difference = timer.elapsed();
 
     cout << endl;
@@ -254,7 +254,7 @@ void getPlusGrandCarre(int i, int j, Cell** currentGrille, Square* square)
 }
 //Fonction principale.
 //C'est la fonction recursive qui permet de trouver la solution optimale.
-void rechercherSolutionOptimale(int i, int j, int squareMaxSize, Cell** currentGrid, int nbSquares)
+void rechercherSolutionOptimale(int i, int j, Cell** currentGrid, int nbSquares)
 {
     //On check l'horloge toutes les 5 secondes
     if(nbRecursions % 10000000 == 0 && timer.elapsed() > 120000)
@@ -285,7 +285,7 @@ void rechercherSolutionOptimale(int i, int j, int squareMaxSize, Cell** currentG
        //C'est un noeud
        if(coord[0] != -1 && coord[1] != -1)
        {
-           rechercherSolutionOptimale(coord[0], coord[1], squareMaxSize, currentGrid, nbSquares);
+           rechercherSolutionOptimale(coord[0], coord[1], currentGrid, nbSquares);
        }
        //C'est une feuille solution optimale
        else
