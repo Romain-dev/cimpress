@@ -15,7 +15,7 @@ int ligne, colonne;
 int squareId = 10;
 Cell** grille;
 Cell** grilleCloned;
-    QTime timer;
+QTime timer;
 void remplirGrilleAvecNouveauCarre(Square *carre, Cell** grid);
 void afficherGrilleIsAvailable(Cell **grille);
 void afficherGrilleValue(Cell **grille);
@@ -31,6 +31,7 @@ int nbRecursions= 0;
 int nbTrous = 0;
 int nbVariables = 0;
 bool flagStopTimer = false;
+
 int main(int argc, char *argv[])
 {
 
@@ -71,6 +72,7 @@ int main(int argc, char *argv[])
     return 1;
 }
 
+//Permet de charger la contenu de fichier dans la matrice
 void lireFichier(char* path)
 {
     QFile inputSudoku(path);
@@ -114,6 +116,7 @@ void lireFichier(char* path)
 
     }
 }
+//Affiche dans la console la grille avec les espaces disponibles
 void afficherGrilleIsAvailable(Cell **grille)
 {
     cout << "Affichage matrice " << endl;
@@ -126,6 +129,7 @@ void afficherGrilleIsAvailable(Cell **grille)
         cout << endl;
     }
 }
+//Permet d'afficher le contenu de la grille dans la matrice
 void afficherGrilleValue(Cell **grille)
 {
     for(int i=0;i<ligne;i++)
@@ -143,6 +147,7 @@ void afficherGrilleValue(Cell **grille)
         cout << endl;
     }
 }
+//Fonction qui sert à trouver une premiere solution, avant d'explorer l'arbre
 void explorerCelluleSuivante(int positionI, int positionJ)
 {
     Square *square = new Square();
@@ -170,13 +175,16 @@ void explorerCelluleSuivante(int positionI, int positionJ)
         }
     }
 }
+//insertion du carre dans grid
 void remplirGrilleAvecNouveauCarre(Square *carre, Cell** grid)
 {
+    //L'id du carre
     squareId ++;
     if(squareId >= 100) {
         squareId = 10;
     }
 
+    //On insert le carre dans la grille
     for(int i=carre->getPositionI();i<carre->getLargeur() + carre->getPositionI();i++)
     {
         for(int j=carre->getPositionJ();j<carre->getLargeur() +carre->getPositionJ() ;j++)
@@ -185,9 +193,10 @@ void remplirGrilleAvecNouveauCarre(Square *carre, Cell** grid)
         }
     }
 }
+//suppression du carre dans grid
 void supprimerGrilleAvecCarre(Square *carre, Cell** grid)
 {
-
+    //Suppression du carre pour rendre la grille propre
     for(int i=carre->getPositionI();i<carre->getLargeur() + carre->getPositionI();i++)
     {
         for(int j=carre->getPositionJ();j<carre->getLargeur() +carre->getPositionJ() ;j++)
@@ -196,15 +205,18 @@ void supprimerGrilleAvecCarre(Square *carre, Cell** grid)
         }
     }
 }
+//Permet de trouver le plus grand carre possible a une position i,j dans la grille.
 void getPlusGrandCarre(int i, int j, Cell** currentGrille, Square* square)
 {
     int size = 1;
     bool canContinu = true;
 
+    //C'est une case vide
     if(!currentGrille[i][j].getIsAvailable()) {
         return;
     }
 
+    //On cherche le plus grand carre possible (on essai avec 1, puis 2, puis 3, ...)
     while(canContinu)
     {
         if (i+size < ligne && j+size < colonne)
@@ -240,8 +252,11 @@ void getPlusGrandCarre(int i, int j, Cell** currentGrille, Square* square)
     square->setPositionI(i);
     square->setPositionJ(j);
 }
+//Fonction principale.
+//C'est la fonction recursive qui permet de trouver la solution optimale.
 void rechercherSolutionOptimale(int i, int j, int squareMaxSize, Cell** currentGrid, int nbSquares)
 {
+    //On check l'horloge toutes les 5 secondes
     if(nbRecursions % 10000000 == 0 && timer.elapsed() > 120000)
     {
         flagStopTimer = true;
@@ -249,6 +264,7 @@ void rechercherSolutionOptimale(int i, int j, int squareMaxSize, Cell** currentG
     }
     nbRecursions++;
     Square *square = new Square();
+
     //Couper la branche
     if(nbSquares >= nbSquareProvisoire)
     {
@@ -258,6 +274,7 @@ void rechercherSolutionOptimale(int i, int j, int squareMaxSize, Cell** currentG
 
     getPlusGrandCarre(i,j,currentGrid, square);
     nbSquares++;
+    //Pour chaque carre de taille 1 a la taille max du carre possible a cette position
     for(int i = square->getLargeur(); i >= 1; i--)
     {
        Square *squareScoped = new Square(i,square->getPositionI(),square->getPositionJ());
@@ -283,11 +300,13 @@ void rechercherSolutionOptimale(int i, int j, int squareMaxSize, Cell** currentG
             nbSquares--;
 
        }
+       //On nettoient la matrice pour depiler
        supprimerGrilleAvecCarre(square,currentGrid);
        delete(squareScoped);
     }
     delete(square);
 }
+//Donne la prochaine position i,j ou l'ont peut positionner un carre dans la grille
 void getPositionOfNextCase(Cell** grid, int result[2])
 {
     for(int i=0;i<ligne;i++)
@@ -305,6 +324,7 @@ void getPositionOfNextCase(Cell** grid, int result[2])
 
     return;
 }
+//Clone arg1 dans arg2
 void cloneGrid(Cell** gridOriginal, Cell** gridToClone)
 {
     for(int i=0;i<ligne;i++)
