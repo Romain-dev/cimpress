@@ -1,3 +1,7 @@
+//GALLI Romain
+//GHARBI Eddy
+//INFRES-6
+
 #include "cell.h"
 
 Cell::Cell()

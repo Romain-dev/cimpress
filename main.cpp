@@ -1,3 +1,7 @@
+//GALLI Romain
+//GHARBI Eddy
+//INFRES-6
+
 #include "iostream"
 #include <stdio.h>
 #include "cell.h"
@@ -30,7 +34,7 @@ bool flagStopTimer = false;
 int main(int argc, char *argv[])
 {
 
-    lireFichier("../build/sample/s6.txt");
+    lireFichier("../build/sample/s1.txt");
     analysePossibilite();
 
     cloneGrid(grille,grilleCloned);

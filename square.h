@@ -1,3 +1,7 @@
+//GALLI Romain
+//GHARBI Eddy
+//INFRES-6
+
 #ifndef SQUARE_H
 #define SQUARE_H
 

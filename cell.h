@@ -1,3 +1,7 @@
+//GALLI Romain
+//GHARBI Eddy
+//INFRES-6
+
 #ifndef CELL_H
 #define CELL_H
 
